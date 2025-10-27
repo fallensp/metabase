@@ -1,0 +1,4 @@
+host = rm-zf8y08kjwlwy6u0kcdo.mysql.kualalumpur.rds.aliyuncs.com
+user = ivan
+password = Buyabread87
+database = epb
