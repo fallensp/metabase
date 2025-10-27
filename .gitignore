@@ -1,0 +1,20 @@
+# General ignores
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.log
+logs/
+.env
+.env.*
+.vscode/
+.idea/
+# Python cache (possible tooling)
+__pycache__/
+*.pyc
+# Node/JS (just in case for tooling)
+node_modules/
+dist/
+build/
+# Metabase exports backups
+metabase/dashboards/*/exports/

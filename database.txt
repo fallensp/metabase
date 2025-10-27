@@ -1,4 +1,4 @@
-host = rm-zf8y08kjwlwy6u0kcdo.mysql.kualalumpur.rds.aliyuncs.com
-user = ivan
+host =pgm-zf88bk02y03831k6co.pgsql.kualalumpur.rds.aliyuncs.com
+user = quantum
 password = Buyabread87
 database = epb

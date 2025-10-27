@@ -1,0 +1,213 @@
+{
+  "cards": [
+    {
+      "name": "Total Sales Today",
+      "slug": "total-sales-today",
+      "description": "Sum of revenue booked today across all product categories.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT COALESCE(SUM(revenue_amount), 0) AS total_sales_today\nFROM sales_insights.sales_orders\nWHERE order_date = CURRENT_DATE;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "prefix": "MYR"
+      }
+    },
+    {
+      "name": "Total Sales Week-to-Date",
+      "slug": "total-sales-week-to-date",
+      "description": "Revenue accumulated since the start of the current week.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT COALESCE(SUM(revenue_amount), 0) AS total_sales_week\nFROM sales_insights.sales_orders\nWHERE order_date >= date_trunc('week', CURRENT_DATE)\n  AND order_date < date_trunc('week', CURRENT_DATE) + INTERVAL '7 days';",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "prefix": "MYR"
+      }
+    },
+    {
+      "name": "Total Sales Month-to-Date",
+      "slug": "total-sales-month-to-date",
+      "description": "Revenue accumulated since the start of the current month.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT COALESCE(SUM(revenue_amount), 0) AS total_sales_month\nFROM sales_insights.sales_orders\nWHERE order_date >= date_trunc('month', CURRENT_DATE)\n  AND order_date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month';",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "prefix": "MYR"
+      }
+    },
+    {
+      "name": "Total Sales Year-to-Date",
+      "slug": "total-sales-year-to-date",
+      "description": "Revenue accumulated since the start of the current year.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT COALESCE(SUM(revenue_amount), 0) AS total_sales_ytd\nFROM sales_insights.sales_orders\nWHERE order_date >= date_trunc('year', CURRENT_DATE)\n  AND order_date < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year';",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "prefix": "MYR"
+      }
+    },
+    {
+      "name": "Sales vs Target (Company)",
+      "slug": "sales-vs-target-company",
+      "description": "Company-wide attainment for the current month versus target.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "WITH actual AS (\n    SELECT date_trunc('month', order_date)::date AS target_date,\n           SUM(revenue_amount) AS actual_amount\n    FROM sales_insights.sales_orders\n    WHERE order_date >= date_trunc('month', CURRENT_DATE)\n      AND order_date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'\n    GROUP BY 1\n), target AS (\n    SELECT target_date, target_amount\n    FROM sales_insights.sales_targets\n    WHERE granularity = 'company'\n      AND entity_id = 'ALL'\n      AND target_date = date_trunc('month', CURRENT_DATE)\n)\nSELECT CASE WHEN target.target_amount > 0\n            THEN ROUND(actual.actual_amount / target.target_amount * 100, 1)\n            ELSE NULL END AS attainment_pct\nFROM target\nLEFT JOIN actual\n  ON target.target_date = actual.target_date;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "suffix": "%"
+      }
+    },
+    {
+      "name": "Sales vs Target by Product",
+      "slug": "sales-vs-target-by-product",
+      "description": "Current-month attainment by product category.",
+      "visualization": "table",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "WITH actual AS (\n    SELECT product_category, SUM(revenue_amount) AS actual_amount\n    FROM sales_insights.sales_orders\n    WHERE order_date >= date_trunc('month', CURRENT_DATE)\n      AND order_date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'\n    GROUP BY product_category\n), target AS (\n    SELECT entity_id AS product_category, target_amount\n    FROM sales_insights.sales_targets\n    WHERE granularity = 'category'\n      AND target_date = date_trunc('month', CURRENT_DATE)\n)\nSELECT\n    COALESCE(a.product_category, t.product_category) AS product_category,\n    ROUND(COALESCE(a.actual_amount, 0), 2) AS actual_amount,\n    ROUND(COALESCE(t.target_amount, 0), 2) AS target_amount,\n    CASE WHEN COALESCE(t.target_amount, 0) > 0\n         THEN ROUND(COALESCE(a.actual_amount, 0) / t.target_amount * 100, 2)\n         ELSE NULL END AS attainment_pct\nFROM target t\nFULL OUTER JOIN actual a USING (product_category)\nORDER BY attainment_pct DESC NULLS LAST;",
+          "template-tags": {}
+        }
+      }
+    },
+    {
+      "name": "Sales vs Target by Sales Rep",
+      "slug": "sales-vs-target-by-sales-rep",
+      "description": "Current-month attainment by sales representative.",
+      "visualization": "table",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "WITH actual AS (\n    SELECT salesperson_id, SUM(revenue_amount) AS actual_amount\n    FROM sales_insights.sales_orders\n    WHERE order_date >= date_trunc('month', CURRENT_DATE)\n      AND order_date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'\n    GROUP BY salesperson_id\n), target AS (\n    SELECT entity_id AS salesperson_id, target_amount\n    FROM sales_insights.sales_targets\n    WHERE granularity = 'salesperson'\n      AND target_date = date_trunc('month', CURRENT_DATE)\n)\nSELECT\n    COALESCE(a.salesperson_id, t.salesperson_id) AS salesperson_id,\n    ROUND(COALESCE(a.actual_amount, 0), 2) AS actual_amount,\n    ROUND(COALESCE(t.target_amount, 0), 2) AS target_amount,\n    CASE WHEN COALESCE(t.target_amount, 0) > 0\n         THEN ROUND(COALESCE(a.actual_amount, 0) / t.target_amount * 100, 2)\n         ELSE NULL END AS attainment_pct\nFROM target t\nFULL OUTER JOIN actual a USING (salesperson_id)\nORDER BY attainment_pct DESC NULLS LAST;",
+          "template-tags": {}
+        }
+      }
+    },
+    {
+      "name": "Sales Trend (Monthly)",
+      "slug": "sales-trend-monthly",
+      "description": "Rolling 12-month trend of total sales.",
+      "visualization": "line",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT date_trunc('month', order_date)::date AS month_start,\n       ROUND(SUM(revenue_amount), 2) AS total_sales\nFROM sales_insights.sales_orders\nWHERE order_date >= CURRENT_DATE - INTERVAL '12 months'\nGROUP BY 1\nORDER BY 1;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "series_colors": {
+          "total_sales": "#0A9396"
+        }
+      }
+    },
+    {
+      "name": "Top Sales Representatives (Last 30 Days)",
+      "slug": "top-sales-reps",
+      "description": "Top performing sales representatives in the last 30 days.",
+      "visualization": "bar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT salesperson_id,\n       ROUND(SUM(revenue_amount), 2) AS total_sales\nFROM sales_insights.sales_orders\nWHERE order_date >= CURRENT_DATE - INTERVAL '30 days'\nGROUP BY salesperson_id\nORDER BY total_sales DESC\nLIMIT 10;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "orientation": "horizontal",
+        "color": "#005F73"
+      }
+    },
+    {
+      "name": "Average Order Value (Month-to-Date)",
+      "slug": "average-order-value",
+      "description": "Average revenue per order for the current month.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT CASE WHEN COUNT(DISTINCT order_id) > 0\n            THEN ROUND(SUM(revenue_amount) / COUNT(DISTINCT order_id), 2)\n            ELSE 0 END AS avg_order_value\nFROM sales_insights.sales_orders\nWHERE order_date >= date_trunc('month', CURRENT_DATE)\n  AND order_date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month';",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "prefix": "MYR"
+      }
+    },
+    {
+      "name": "Profit Margin by Product Category",
+      "slug": "profit-margin-by-product",
+      "description": "Gross margin percentage by product category (last 90 days).",
+      "visualization": "bar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT product_category,\n       ROUND(SUM(gross_profit) / NULLIF(SUM(revenue_amount), 0) * 100, 2) AS margin_pct\nFROM sales_insights.sales_orders\nWHERE order_date >= CURRENT_DATE - INTERVAL '90 days'\nGROUP BY product_category\nORDER BY margin_pct DESC;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "orientation": "horizontal",
+        "color": "#EE9B00"
+      }
+    },
+    {
+      "name": "Profit Margin by Customer",
+      "slug": "profit-margin-by-customer",
+      "description": "Top customers by gross margin percentage (last 90 days).",
+      "visualization": "bar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT c.customer_name,\n       ROUND(SUM(o.gross_profit) / NULLIF(SUM(o.revenue_amount), 0) * 100, 2) AS margin_pct,\n       ROUND(SUM(o.gross_profit), 2) AS gross_profit\nFROM sales_insights.sales_orders o\nJOIN sales_insights.customers c ON c.customer_id = o.customer_id\nWHERE o.order_date >= CURRENT_DATE - INTERVAL '90 days'\nGROUP BY c.customer_name\nHAVING SUM(o.revenue_amount) > 0\nORDER BY margin_pct DESC\nLIMIT 10;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "orientation": "horizontal",
+        "color": "#CA6702"
+      }
+    },
+    {
+      "name": "Gross Profit Trend",
+      "slug": "gross-profit-trend",
+      "description": "Monthly gross profit trend over the last 12 months.",
+      "visualization": "line",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT date_trunc('month', order_date)::date AS month_start,\n       ROUND(SUM(gross_profit), 2) AS gross_profit\nFROM sales_insights.sales_orders\nWHERE order_date >= CURRENT_DATE - INTERVAL '12 months'\nGROUP BY 1\nORDER BY 1;",
+          "template-tags": {}
+        }
+      },
+      "display": {
+        "series_colors": {
+          "gross_profit": "#AE2012"
+        }
+      }
+    }
+  ]
+}

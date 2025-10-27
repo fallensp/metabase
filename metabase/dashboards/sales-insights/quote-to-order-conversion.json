@@ -1,0 +1,34 @@
+{
+  "cards": [
+    {
+      "name": "Conversion Rate by Product Category",
+      "slug": "conversion-rate-by-category",
+      "description": "Shows conversion percentage from quotation to order by category.",
+      "visualization": "line",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "WITH joined AS (\n  SELECT q.product_category, q.quotation_id, o.order_id\n  FROM sales_insights.sales_quotations q\n  LEFT JOIN sales_insights.sales_orders o\n    ON o.quotation_id = q.quotation_id\n)\nSELECT product_category,\n       COUNT(DISTINCT order_id)::float / NULLIF(COUNT(DISTINCT quotation_id),0) AS conversion_rate\nFROM joined\nGROUP BY product_category\nORDER BY product_category;"
+        }
+      },
+      "display": {
+        "y_axis_units": "percent"
+      }
+    },
+    {
+      "name": "Order Value Sourced from Quotations",
+      "slug": "order-value-from-quotes",
+      "description": "Total revenue tied to quotations per category.",
+      "visualization": "bar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT product_category, SUM(revenue_amount) AS order_value\nFROM sales_insights.sales_orders\nWHERE quotation_id IS NOT NULL\nGROUP BY product_category\nORDER BY order_value DESC;"
+        }
+      },
+      "display": {
+        "color": "#BB3E03"
+      }
+    }
+  ]
+}

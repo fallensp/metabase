@@ -1,0 +1,37 @@
+{
+  "cards": [
+    {
+      "name": "Prior Day Order Count",
+      "slug": "prior-day-order-count",
+      "description": "Total number of orders booked yesterday.",
+      "visualization": "scalar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT COUNT(*) AS order_count\nFROM sales_insights.sales_orders\nWHERE order_date = CURRENT_DATE - INTERVAL '1 day';"
+        }
+      },
+      "display": {
+        "prefix": "Orders"
+      }
+    },
+    {
+      "name": "Daily Revenue Trend",
+      "slug": "daily-revenue-trend",
+      "description": "Trailing 30-day revenue trend with trailing 7-day average.",
+      "visualization": "line",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "WITH daily AS (\n  SELECT order_date,\n         SUM(revenue_amount) AS revenue,\n         AVG(SUM(revenue_amount)) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS trailing_avg\n  FROM sales_insights.sales_orders\n  WHERE order_date >= CURRENT_DATE - INTERVAL '30 days'\n  GROUP BY order_date\n)\nSELECT order_date, revenue, trailing_avg\nFROM daily\nORDER BY order_date;"
+        }
+      },
+      "display": {
+        "series_colors": {
+          "revenue": "#005F73",
+          "trailing_avg": "#EE9B00"
+        }
+      }
+    }
+  ]
+}

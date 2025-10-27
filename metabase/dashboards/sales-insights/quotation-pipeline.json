@@ -1,0 +1,32 @@
+{
+  "cards": [
+    {
+      "name": "Quotation Value by Status",
+      "slug": "quotation-value-by-status",
+      "description": "Distribution of quotation value across statuses.",
+      "visualization": "bar",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT status, SUM(quoted_amount) AS total_value\nFROM sales_insights.sales_quotations\nGROUP BY status\nORDER BY status;"
+        }
+      },
+      "display": {
+        "orientation": "horizontal",
+        "color": "#0A9396"
+      }
+    },
+    {
+      "name": "Top Customers by Open Quotation Value",
+      "slug": "top-customers-open-quotations",
+      "description": "Highlight customers driving open pipeline.",
+      "visualization": "table",
+      "dataset_query": {
+        "type": "native",
+        "native": {
+          "query": "SELECT c.customer_name, SUM(q.quoted_amount) AS open_value\nFROM sales_insights.sales_quotations q\nJOIN sales_insights.customers c ON c.customer_id = q.customer_id\nWHERE q.status IN ('Draft', 'Active')\nGROUP BY c.customer_name\nORDER BY open_value DESC\nLIMIT 10;"
+        }
+      }
+    }
+  ]
+}

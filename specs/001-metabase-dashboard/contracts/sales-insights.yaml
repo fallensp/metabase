@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: Sales Insights Mock Data API
+  version: 0.1.0
+  description: >-
+    Contract for services that back the Metabase sales insights dashboard. Provides
+    deterministic mock datasets for orders, quotations, and conversion metrics.
+servers:
+  - url: https://analytics.example.com/mock
+paths:
+  /orders:
+    get:
+      summary: List seeded sales orders
+      description: Returns paginated sales orders filtered by date range and product category to validate dashboard metrics.
+      parameters:
+        - in: query
+          name: start_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: product_category
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+      responses:
+        '200':
+          description: Paginated list of sales orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderPage'
+  /quotations:
+    get:
+      summary: List seeded sales quotations
+      description: Returns quotations grouped by status for pipeline validation.
+      parameters:
+        - in: query
+          name: start_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [Draft, Active, Completed, Lost]
+          required: false
+        - in: query
+          name: product_category
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Collection of quotations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quotation'
+  /metrics/conversion:
+    get:
+      summary: Retrieve quote-to-order conversion metrics
+      description: Provides conversion percentages and values per product category for dashboard validation.
+      parameters:
+        - in: query
+          name: start_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          required: true
+        - in: query
+          name: product_category
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Conversion metrics payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionMetrics'
+components:
+  schemas:
+    OrderPage:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+    Order:
+      type: object
+      required: [order_id, order_date, customer_id, product_category, revenue_amount, quantity]
+      properties:
+        order_id:
+          type: string
+        order_date:
+          type: string
+          format: date
+        customer_id:
+          type: string
+        customer_name:
+          type: string
+        product_category:
+          type: string
+        product_name:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        revenue_amount:
+          type: number
+          format: float
+          minimum: 0
+        currency:
+          type: string
+          default: MYR
+        delivery_status:
+          type: string
+          enum: [Pending, Shipped, Delivered, Cancelled]
+        salesperson_id:
+          type: string
+    Quotation:
+      type: object
+      required: [quotation_id, quotation_date, customer_id, product_category, quoted_amount, status]
+      properties:
+        quotation_id:
+          type: string
+        quotation_date:
+          type: string
+          format: date
+        customer_id:
+          type: string
+        customer_name:
+          type: string
+        product_category:
+          type: string
+        quoted_amount:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+          default: MYR
+        status:
+          type: string
+          enum: [Draft, Active, Completed, Lost]
+        salesperson_id:
+          type: string
+        expected_close_date:
+          type: string
+          format: date
+    ConversionMetrics:
+      type: object
+      required: [categories]
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            required: [product_category, quotation_count, order_count, conversion_rate, order_value]
+            properties:
+              product_category:
+                type: string
+              quotation_count:
+                type: integer
+                minimum: 0
+              order_count:
+                type: integer
+                minimum: 0
+              conversion_rate:
+                type: number
+                format: float
+                minimum: 0
+                maximum: 1
+              order_value:
+                type: number
+                format: float
+                minimum: 0

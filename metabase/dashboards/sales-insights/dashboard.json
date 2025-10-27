@@ -1,0 +1,215 @@
+{
+  "name": "Sales Insights",
+  "description": "UI-first dashboard showcasing sales health, quotation pipeline, and quote-to-order conversion.",
+  "collection": "Sales Insights",
+  "parameters": [
+    {
+      "name": "Date Range",
+      "slug": "date",
+      "type": "date/all",
+      "default": "past90days"
+    },
+    {
+      "name": "Product Category",
+      "slug": "product_category",
+      "type": "category"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "Sales Performance Overview",
+      "description": "Core revenue, margin, and target metrics for leadership reviews.",
+      "cards": [
+        {
+          "ref": "sales-performance-overview.json#total-sales-today",
+          "layout": {
+            "col": 0,
+            "row": 0,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#total-sales-week-to-date",
+          "layout": {
+            "col": 3,
+            "row": 0,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#total-sales-month-to-date",
+          "layout": {
+            "col": 6,
+            "row": 0,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#total-sales-year-to-date",
+          "layout": {
+            "col": 9,
+            "row": 0,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#sales-vs-target-company",
+          "layout": {
+            "col": 0,
+            "row": 2,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#average-order-value",
+          "layout": {
+            "col": 3,
+            "row": 2,
+            "size_x": 3,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#sales-vs-target-by-product",
+          "layout": {
+            "col": 6,
+            "row": 2,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#sales-vs-target-by-sales-rep",
+          "layout": {
+            "col": 0,
+            "row": 4,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#sales-trend-monthly",
+          "layout": {
+            "col": 0,
+            "row": 8,
+            "size_x": 12,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#top-sales-reps",
+          "layout": {
+            "col": 0,
+            "row": 12,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#profit-margin-by-product",
+          "layout": {
+            "col": 6,
+            "row": 12,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#profit-margin-by-customer",
+          "layout": {
+            "col": 0,
+            "row": 16,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "sales-performance-overview.json#gross-profit-trend",
+          "layout": {
+            "col": 6,
+            "row": 16,
+            "size_x": 6,
+            "size_y": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Daily Sales Health",
+      "description": "Hero KPIs and trends for prior-day performance.",
+      "cards": [
+        {
+          "ref": "daily-sales-health.json#prior-day-order-count",
+          "layout": {
+            "col": 0,
+            "row": 0,
+            "size_x": 4,
+            "size_y": 2
+          }
+        },
+        {
+          "ref": "daily-sales-health.json#daily-revenue-trend",
+          "layout": {
+            "col": 4,
+            "row": 0,
+            "size_x": 8,
+            "size_y": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quotation Pipeline",
+      "description": "Status and segment breakdown of quotations.",
+      "cards": [
+        {
+          "ref": "quotation-pipeline.json#quotation-value-by-status",
+          "layout": {
+            "col": 0,
+            "row": 0,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "quotation-pipeline.json#top-customers-open-quotations",
+          "layout": {
+            "col": 6,
+            "row": 0,
+            "size_x": 6,
+            "size_y": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quote-to-Order Conversion",
+      "description": "Conversion rates across key product categories.",
+      "cards": [
+        {
+          "ref": "quote-to-order-conversion.json#conversion-rate-by-category",
+          "layout": {
+            "col": 0,
+            "row": 0,
+            "size_x": 6,
+            "size_y": 4
+          }
+        },
+        {
+          "ref": "quote-to-order-conversion.json#order-value-from-quotes",
+          "layout": {
+            "col": 6,
+            "row": 0,
+            "size_x": 6,
+            "size_y": 4
+          }
+        }
+      ]
+    }
+  ]
+}
