@@ -15,7 +15,6 @@ __pycache__/
 # Node/JS (just in case for tooling)
 node_modules/
 .npm-cache/
-dist/
 build/
 # Metabase exports backups
 metabase/dashboards/*/exports/

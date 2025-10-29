@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kintex Hybrid Analytics Architecture</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+  <style>
+    body {
+      background-color: #f5f7fb;
+      color: #1f2933;
+    }
+    .hero {
+      background: linear-gradient(135deg, #224abe, #1a73e8);
+      color: #ffffff;
+      border-radius: 1.5rem;
+      padding: 4rem 3rem;
+    }
+    .phase-section {
+      background: #ffffff;
+      border-radius: 1.25rem;
+      box-shadow: 0 0.5rem 2rem rgba(15, 23, 42, 0.08);
+      padding: 2.5rem;
+    }
+    .phase-icon {
+      width: 3rem;
+      height: 3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e7edfe;
+      border-radius: 0.75rem;
+      color: #224abe;
+      font-size: 1.5rem;
+    }
+    .phase-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #224abe;
+    }
+    .architecture-flow {
+      border-radius: 1rem;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(34, 74, 190, 0.08);
+    }
+    .flow-step {
+      flex: 1 1 auto;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .flow-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -0.75rem;
+      transform: translateY(-50%);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: #224abe;
+      box-shadow: 2.5rem 0 0 -0.5rem rgba(34, 74, 190, 0.2);
+    }
+    .benefit-icon {
+      font-size: 1.5rem;
+      color: #1a73e8;
+    }
+    .mermaid-diagram {
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.08);
+      padding: 2rem;
+    }
+    .metabase-frame {
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid rgba(34, 74, 190, 0.12);
+    }
+    .metabase-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .phase-visual {
+      display: block;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid rgba(34, 74, 190, 0.12);
+    }
+    .phase-visual img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    footer {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    @media (max-width: 768px) {
+      .hero {
+        padding: 3rem 2rem;
+      }
+      .phase-section {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <header class="hero mb-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <h1 class="display-5 fw-semibold mb-4">Kintex Hybrid Analytics Architecture</h1>
+          <p class="lead mb-4">
+            Three clear phases to modernize Kintex analytics: run a nightly ETL, explore metrics with Metabase, and deliver a focused dashboard.
+          </p>
+          <div class="d-flex gap-3 flex-wrap">
+            <span class="badge text-bg-light text-primary-emphasis px-3 py-2">
+              <i class="bi bi-diagram-3 me-1"></i>
+              Separate Data Store
+            </span>
+            <span class="badge text-bg-light text-primary-emphasis px-3 py-2">
+              <i class="bi bi-lightning-charge me-1"></i>
+              Faster Metrics
+            </span>
+            <span class="badge text-bg-light text-primary-emphasis px-3 py-2">
+              <i class="bi bi-kanban me-1"></i>
+              One Dashboard
+            </span>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="p-4 bg-white text-dark rounded-4 shadow-sm">
+            <h2 class="h5 fw-semibold mb-3">Guiding Objectives</h2>
+            <ul class="list-unstyled mb-0">
+              <li class="d-flex align-items-start mb-3">
+                <i class="bi bi-database-fill-gear benefit-icon me-3"></i>
+                <span>Keep Kintex reporting data in its own store so the EPB ERP stays steady.</span>
+              </li>
+              <li class="d-flex align-items-start mb-3">
+                <i class="bi bi-easel2-fill benefit-icon me-3"></i>
+                <span>Let teams test KPIs quickly in Metabase before any code work.</span>
+              </li>
+              <li class="d-flex align-items-start">
+                <i class="bi bi-display-fill benefit-icon me-3"></i>
+                <span>Show long-term trends and live KPIs in one branded dashboard.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="mb-5">
+      <div class="text-center mb-4">
+        <span class="text-uppercase text-primary fw-semibold">Three-Phase Plan</span>
+        <h2 class="h3 fw-bold mt-2">Build the pipeline step by step</h2>
+        <p class="text-secondary mt-3">
+          Finish one stage, learn from it, then move on with the pieces already in place.
+        </p>
+      </div>
+
+      <div class="phase-section mb-4">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-6">
+            <div class="mermaid-diagram mb-0">
+              <div class="mermaid">
+graph TD
+  SRC[EPB ERP Database] -->|Nightly Extract| CLEAN[Transform & Clean]
+  CLEAN --> AGG[Aggregate & Model]
+  AGG --> DEST[Kintex Analytics PostgreSQL]
+              </div>
+            </div>
+            <p class="text-secondary small mt-3 mb-0">Diagram: Nightly ETL flow from EPB to the Kintex analytics store.</p>
+          </div>
+          <div class="col-lg-6">
+            <div class="phase-pill mb-3">
+              <span class="phase-icon"><i class="bi bi-cloud-arrow-down-fill"></i></span>
+              <span>Phase 1 · Nightly ETL</span>
+            </div>
+            <p class="text-secondary">
+              Copy EPB ERP data into a Kintex analytics store every night, shaping it for reporting and keeping history intact.
+            </p>
+            <div class="row g-4">
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">What happens</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Nightly extract and transform jobs</li>
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Cleaned tables built for analysis</li>
+                  <li><i class="bi bi-check2-circle text-success me-2"></i>Historical snapshots retained</li>
+                </ul>
+              </div>
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">Why it helps</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>ERP stays focused on transactions</li>
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Analytics queries run faster</li>
+                  <li><i class="bi bi-check-circle-fill text-success me-2"></i>Data foundation ready for new Kintex use cases</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-section mb-4">
+        <div class="row g-4 align-items-center flex-lg-row-reverse">
+          <div class="col-lg-6">
+            <figure class="phase-visual mb-0">
+              <img src="assets/phase2-metabase.png" alt="Metabase dashboard with sales metrics">
+            </figure>
+            <p class="text-secondary small mt-3 mb-0">Screenshot: Metabase dashboard sample.</p>
+          </div>
+          <div class="col-lg-6">
+            <div class="phase-pill mb-3">
+              <span class="phase-icon"><i class="bi bi-graph-up-arrow"></i></span>
+              <span>Phase 2 · Metabase Exploration</span>
+            </div>
+            <p class="text-secondary">
+              Use Metabase to explore the analytics tables, test KPIs with Kintex stakeholders, and agree on the metrics that matter.
+            </p>
+            <div class="row g-4">
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">What happens</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Teams build charts without code</li>
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Dashboards shared for feedback</li>
+                  <li><i class="bi bi-check2-circle text-success me-2"></i>Metric definitions captured</li>
+                </ul>
+              </div>
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">Why it helps</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Faster iteration on ideas</li>
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Less engineering rework</li>
+                  <li><i class="bi bi-check-circle-fill text-success me-2"></i>Shared understanding of Kintex KPIs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-section">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-6">
+            <figure class="phase-visual mb-0">
+              <img src="assets/phase3-dashboard.png" alt="Custom Kintex analytics dashboard concept">
+            </figure>
+            <p class="text-secondary small mt-3 mb-0">Screenshot: Custom Kintex dashboard concept.</p>
+          </div>
+          <div class="col-lg-6">
+            <div class="phase-pill mb-3">
+              <span class="phase-icon"><i class="bi bi-layers-fill"></i></span>
+              <span>Phase 3 · Custom Experience</span>
+            </div>
+            <p class="text-secondary">
+              Embed the finalized Metabase content and add custom widgets for live KPIs, Kintex branding, and advanced filters.
+            </p>
+            <div class="row g-4">
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">What happens</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Embed approved Metabase charts</li>
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Add custom widgets for live KPIs</li>
+                  <li><i class="bi bi-check2-circle text-success me-2"></i>Apply Kintex branding and layout rules</li>
+                </ul>
+              </div>
+              <div class="col-sm-6">
+                <h3 class="h6 text-uppercase text-primary mb-2">Why it helps</h3>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Single pane for Kintex insights</li>
+                  <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Supports advanced filters and actions</li>
+                  <li><i class="bi bi-check-circle-fill text-success me-2"></i>Ready for secure embedding upgrades</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-5">
+      <div class="text-center mb-4">
+        <span class="text-uppercase text-primary fw-semibold">Architecture Highlights</span>
+        <h2 class="h3 fw-bold mt-2">Data flow at a glance</h2>
+        <p class="text-secondary mt-3">
+          See how data moves from the EPB ERP into tools that Kintex teams use every day.
+        </p>
+      </div>
+      <div class="architecture-flow d-flex flex-column flex-lg-row justify-content-between align-items-stretch p-4 gap-3">
+        <div class="flow-step bg-white rounded-4 border border-light">
+          <h3 class="h6 text-uppercase text-primary mb-2">EPB Operational DB</h3>
+          <p class="text-secondary mb-0">Live system that holds sales, inventory, and customer data.</p>
+        </div>
+        <div class="flow-step bg-white rounded-4 border border-light">
+          <h3 class="h6 text-uppercase text-primary mb-2">Nightly ETL</h3>
+          <p class="text-secondary mb-0">Jobs pull, clean, and prepare the data every night.</p>
+        </div>
+        <div class="flow-step bg-white rounded-4 border border-light">
+          <h3 class="h6 text-uppercase text-primary mb-2">Kintex Analytics PostgreSQL</h3>
+          <p class="text-secondary mb-0">Reporting tables ready for queries and dashboards.</p>
+        </div>
+        <div class="flow-step bg-white rounded-4 border border-light">
+          <h3 class="h6 text-uppercase text-primary mb-2">Metabase + Kintex UI</h3>
+          <p class="text-secondary mb-0">Metabase, APIs, and custom pages show the right insight to each team.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-5">
+      <div class="text-center mb-4">
+        <span class="text-uppercase text-primary fw-semibold">Visual Pipeline</span>
+        <h2 class="h3 fw-bold mt-2">Flow from source to dashboard</h2>
+        <p class="text-secondary mt-3">
+          Follow the path from the EPB ERP database through ETL, Metabase, and Kintex's custom features.
+        </p>
+      </div>
+      <div class="mermaid-diagram">
+        <div class="mermaid">
+graph LR
+  A[EPB Operational Database] -->|Nightly Sync| B[ETL Pipeline]
+  B -->|Transformed Models| C[Kintex Analytics PostgreSQL]
+  C -->|Direct Connection| D[Metabase Exploration]
+  C -->|APIs & Views| E[Kintex Dashboard Services]
+  D -->|Embedded Charts| F[Kintex Dashboard]
+  E -->|Real-time Widgets| F
+  D -->|Validated KPIs| G[Kintex Metric Catalog]
+  G --> F
+        </div>
+      </div>
+    </section>
+
+    <section class="row g-4 mb-5">
+      <div class="col-lg-6">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+          <h2 class="h5 fw-semibold mb-3">Why the order matters</h2>
+          <ul class="list-unstyled text-secondary mb-0">
+            <li class="mb-3">
+              <i class="bi bi-shield-check benefit-icon me-3"></i>
+              <span>ERP stays fast because reporting runs on a different database.</span>
+            </li>
+            <li class="mb-3">
+              <i class="bi bi-lightbulb-fill benefit-icon me-3"></i>
+              <span>Metabase helps pick the right KPIs before we build custom code.</span>
+            </li>
+            <li>
+              <i class="bi bi-arrows-fullscreen benefit-icon me-3"></i>
+              <span>The final dashboard blends long-term trends and live widgets in one place.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+          <h2 class="h5 fw-semibold mb-3">Implementation Priorities</h2>
+          <div class="d-flex flex-column gap-3 text-secondary">
+            <div class="d-flex">
+              <div class="phase-icon me-3">
+                <i class="bi bi-hdd-network-fill"></i>
+              </div>
+              <div>
+                <h3 class="h6 text-uppercase text-primary mb-1">Data Readiness</h3>
+                <p class="mb-0">Pick the ETL tool (Laravel Scheduler, Airflow, or cron) and shape analytics tables.</p>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="phase-icon me-3">
+                <i class="bi bi-journal-richtext"></i>
+              </div>
+              <div>
+                <h3 class="h6 text-uppercase text-primary mb-1">Metric Catalog</h3>
+                <p class="mb-0">Write down KPI definitions as Metabase sessions confirm them with stakeholders.</p>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="phase-icon me-3">
+                <i class="bi bi-window-sidebar"></i>
+              </div>
+              <div>
+                <h3 class="h6 text-uppercase text-primary mb-1">Experience Layer</h3>
+                <p class="mb-0">Design the dashboard layout that mixes embedded charts and custom widgets.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-5">
+      <div class="p-4 bg-white rounded-4 shadow-sm">
+        <h2 class="h5 fw-semibold mb-3">Key deliverables</h2>
+        <div class="row g-3 text-secondary">
+          <div class="col-sm-6">
+            <div class="d-flex">
+              <i class="bi bi-server benefit-icon me-3"></i>
+              <div>
+                <h3 class="h6 mb-1">ETL Playbook</h3>
+                <p class="mb-0">Nightly sync scripts, job steps, and basic monitoring tips.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex">
+              <i class="bi bi-bar-chart-steps benefit-icon me-3"></i>
+              <div>
+                <h3 class="h6 mb-1">Metabase Prototype</h3>
+                <p class="mb-0">Sample dashboards showing agreed KPIs and notes from reviews.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex">
+              <i class="bi bi-layout-wtf benefit-icon me-3"></i>
+              <div>
+                <h3 class="h6 mb-1">Custom Dashboard Shell</h3>
+                <p class="mb-0">Responsive page ready for embeds and custom widgets.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex">
+              <i class="bi bi-people-fill benefit-icon me-3"></i>
+              <div>
+                <h3 class="h6 mb-1">Adoption Toolkit</h3>
+                <p class="mb-0">Short guides, walkthroughs, and a simple governance checklist.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+</body>
+</html>
