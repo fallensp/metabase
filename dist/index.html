@@ -25,6 +25,19 @@
       border-radius: 1.5rem;
       padding: 4rem 3rem;
     }
+    .overview-card {
+      background: #ffffff;
+      border-radius: 1.25rem;
+      box-shadow: 0 0.5rem 2rem rgba(15, 23, 42, 0.08);
+      padding: 2.5rem;
+    }
+    .overview-phase {
+      border-left: 4px solid rgba(34, 74, 190, 0.3);
+      padding-left: 1rem;
+    }
+    .overview-phase strong {
+      color: #224abe;
+    }
     .phase-section {
       background: #ffffff;
       border-radius: 1.25rem;
@@ -164,6 +177,38 @@
         </div>
       </div>
     </header>
+
+    <section class="mb-5">
+      <div class="overview-card">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="badge text-bg-primary text-uppercase">Overview</span>
+          <h2 class="h4 fw-bold mb-0">Why the Kintex hybrid rollout happens in phases</h2>
+        </div>
+        <p class="text-secondary mb-4">
+          The hybrid architecture is intentionally sequenced so each stage delivers value on its own and lays the groundwork for the next. By finishing the extract-and-load work first, teams can experiment in Metabase with real data, then promote proven insights into a branded Kintex experience without rework.
+        </p>
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="overview-phase">
+              <strong>Phase 1 · Establish the analytics store</strong>
+              <p class="text-secondary mb-0">Stabilize a nightly ETL from EPB so reporting data lives outside the ERP and history is preserved.</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="overview-phase">
+              <strong>Phase 2 · Validate metrics with Metabase</strong>
+              <p class="text-secondary mb-0">Use low-code exploration to agree on KPIs, iterate quickly, and document the definitions Kintex cares about.</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="overview-phase">
+              <strong>Phase 3 · Launch the Kintex experience</strong>
+              <p class="text-secondary mb-0">Embed the curated content and custom components to give every team a polished, always-on analytics hub.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="mb-5">
       <div class="text-center mb-4">
