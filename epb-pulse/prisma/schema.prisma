@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  customer_id      String             @id
+  customer_name    String
+  customer_segment String
+  region           String
+  industry         String
+  credit_limit     Decimal            @default(0) @db.Decimal(12, 2)
+  credit_utilized  Decimal            @default(0) @db.Decimal(12, 2)
+  first_order_date DateTime?          @db.Date
+  last_order_date  DateTime?          @db.Date
+  sales_orders     sales_orders[]
+  sales_quotations sales_quotations[]
+}
+
+model inventory_snapshots {
+  snapshot_date   DateTime        @db.Date
+  product_id      String
+  stock_on_hand   Int
+  reserved_units  Int             @default(0)
+  inbound_units   Int             @default(0)
+  product_catalog product_catalog @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([snapshot_date, product_id])
+}
+
+model product_catalog {
+  product_id          String                @id
+  product_name        String
+  product_category    String
+  product_family      String
+  unit_cost           Decimal               @db.Decimal(12, 2)
+  unit_price          Decimal               @db.Decimal(12, 2)
+  launch_date         DateTime?             @db.Date
+  lifecycle_stage     String
+  reorder_point       Int
+  uom                 String                @default("EA")
+  inventory_snapshots inventory_snapshots[]
+}
+
+model sales_forecasts {
+  forecast_id       Int       @id @default(autoincrement())
+  forecast_date     DateTime  @db.Date
+  horizon           String
+  product_category  String
+  predicted_revenue Decimal   @db.Decimal(12, 2)
+  predicted_margin  Decimal   @db.Decimal(12, 2)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model sales_orders {
+  order_id         String                              @id
+  order_date       DateTime                            @db.Date
+  customer_id      String
+  product_category String
+  product_name     String
+  quantity         Int
+  revenue_amount   Decimal                             @db.Decimal(12, 2)
+  currency         String                              @default("MYR")
+  delivery_status  Unsupported("delivery_status_enum")
+  salesperson_id   String
+  quotation_id     String?
+  created_at       DateTime?                           @default(now()) @db.Timestamp(6)
+  unit_price       Decimal?                            @default(0) @db.Decimal(12, 2)
+  unit_cost        Decimal?                            @default(0) @db.Decimal(12, 2)
+  gross_profit     Decimal?                            @default(0) @db.Decimal(12, 2)
+  discount_rate    Decimal?                            @default(0) @db.Decimal(5, 2)
+  sales_channel    String?                             @default("Direct")
+  customers        customers                           @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
+  salespeople      salespeople                         @relation(fields: [salesperson_id], references: [salesperson_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model sales_quotations {
+  quotation_id        String                               @id
+  quotation_date      DateTime                             @db.Date
+  customer_id         String
+  product_category    String
+  quoted_amount       Decimal                              @db.Decimal(12, 2)
+  currency            String                               @default("MYR")
+  status              Unsupported("quotation_status_enum")
+  salesperson_id      String
+  expected_close_date DateTime                             @db.Date
+  created_at          DateTime?                            @default(now()) @db.Timestamp(6)
+  estimated_margin    Decimal?                             @db.Decimal(12, 2)
+  probability         Decimal?                             @default(0.5) @db.Decimal(5, 2)
+  customers           customers                            @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
+  salespeople         salespeople                          @relation(fields: [salesperson_id], references: [salesperson_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sales_targets {
+  target_id     Int       @id @default(autoincrement())
+  target_date   DateTime  @db.Date
+  granularity   String
+  entity_id     String
+  target_amount Decimal   @db.Decimal(12, 2)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model salespeople {
+  salesperson_id   String             @id
+  salesperson_name String
+  department       String
+  territory        String
+  hire_date        DateTime           @db.Date
+  sales_orders     sales_orders[]
+  sales_quotations sales_quotations[]
+}
